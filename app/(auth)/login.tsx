@@ -37,6 +37,8 @@ export default function LoginScreen() {
     setLoading(false);
   };
 
+  console.log({ loading });
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -86,8 +88,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
+    justifyContent: "center",
   },
   socialButton: {
     alignItems: "center",

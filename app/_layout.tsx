@@ -1,37 +1,28 @@
 import "react-native-url-polyfill/auto";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { View, Text } from "react-native";
-import { Session } from "@supabase/supabase-js";
-
+import { useEffect } from "react";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { Stack } from "expo-router";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+// 초기 화면은 이 객체를 활용해 설정해야 한다.
+export const unstable_settings = {
+  initialRouteName: "(auth)/login",
+};
+
 function RootLayout() {
   const colorScheme = useColorScheme();
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  const { session } = useAuth();
 
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -47,15 +38,16 @@ function RootLayout() {
     return null;
   }
 
+  console.log("#session", session, session?.user, !(session && session.user));
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        {session && session.user ? (
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {!(session && session.user) ? (
+          <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
         ) : (
-          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         )}
-        <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
   );

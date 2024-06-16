@@ -9,7 +9,7 @@ export default function HomeScreen() {
           source={require("../../assets/images/logo.png")}
           style={styles.handImage}
         />
-        <Text>Hi!</Text>
+        <Text style={{ color: "white" }}>Welcome to the Home Screen!</Text>
       </View>
     </SafeAreaView>
   );
